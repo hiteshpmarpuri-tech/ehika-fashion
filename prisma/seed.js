@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -17,18 +17,10 @@ async function seed() {
     process.exit(0);
   }
 
-  const hash = await bcrypt.hash(adminPassword, 10);
-  await prisma.user.create({
-    data: {
-      email: adminEmail,
-      password: hash,
-      isAdmin: true,
-      name: 'Admin'
-    }
-  });
+  const hash = bcrypt.hashSync(adminPassword, 10);
+  await prisma.user.create({ data: { email: adminEmail, password: hash, isAdmin: true, name: 'Admin' } });
   console.log('Seeded admin user:', adminEmail);
+  process.exit(0);
 }
 
-seed()
-  .catch(e => { console.error(e); process.exit(1); })
-  .finally(() => process.exit(0));
+seed().catch(e => { console.error(e); process.exit(1); });
