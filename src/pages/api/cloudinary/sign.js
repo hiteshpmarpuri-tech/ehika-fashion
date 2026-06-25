@@ -1,4 +1,3 @@
-import prisma from '../../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 import crypto from 'crypto';
 
