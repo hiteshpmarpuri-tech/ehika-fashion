@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import SearchBar from "./SearchBar";
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
   const [logoUrl, setLogoUrl] = useState('/images/ehika-logo.svg');
+  const [icons, setIcons] = useState([]);
 
   useEffect(() => {
     async function loadSettings() {
@@ -12,12 +13,26 @@ export default function Header() {
         const res = await fetch('/api/settings');
         if (!res.ok) return;
         const json = await res.json();
-        if (json.logoUrl) setLogoUrl(json.logoUrl);
+        if (json.settings?.logoUrl) setLogoUrl(json.settings.logoUrl);
       } catch (err) {
         // ignore and keep default
       }
     }
     loadSettings();
+  }, []);
+
+  useEffect(() => {
+    async function loadIcons() {
+      try {
+        const res = await fetch('/api/icons');
+        if (!res.ok) return;
+        const json = await res.json();
+        setIcons(json.icons || []);
+      } catch (err) {
+        // ignore
+      }
+    }
+    loadIcons();
   }, []);
 
   return (
@@ -30,17 +45,39 @@ export default function Header() {
             </a>
           </Link>
         </div>
+
         <nav className="flex items-center">
-          <Link href="/products"><a>Products</a></Link>
-          <Link href="/about"><a>About</a></Link>
-          <Link href="/free-text"><a>Notes</a></Link>
-          <button onClick={() => setOpen(o => !o)} aria-label="Search" className="ml-4 p-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="11" cy="11" r="6" stroke="#000" strokeWidth="1.5"/></svg>
-          </button>
-          <Link href="/admin"><a className="ml-6">Admin</a></Link>
+          <Link href="/products"><a className="mr-4">Products</a></Link>
+          <Link href="/about"><a className="mr-4">About</a></Link>
+
+          {/* tiny icons area */}
+          <div style={{display:'flex', alignItems:'center', gap:8, marginRight:12}}>
+            {icons.map(ic => (
+              <a key={ic.id} href={ic.href || '#'} title={ic.label || ''} style={{width:28,height:28,display:'inline-block'}}>
+                {ic.image ? (<img src={ic.image} alt={ic.label || 'icon'} style={{width:28,height:28,objectFit:'cover',borderRadius:4}}/>) : (<span style={{display:'inline-block',width:28,height:28,background:'#eee',borderRadius:4}} />)}
+              </a>
+            ))}
+          </div>
+
+          {/* Auth / Admin links */}
+          {session?.isAdmin ? (
+            <>
+              <Link href="/admin"><a className="ml-4">Admin</a></Link>
+              <button onClick={() => signOut()} className="ml-4">Sign out</button>
+            </>
+          ) : session?.user ? (
+            <>
+              <span className="ml-4">{session.user.email}</span>
+              <button onClick={() => signOut()} className="ml-4">Sign out</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => signIn()} className="ml-4">Login</button>
+              <Link href="/signup"><a className="ml-4">Signup</a></Link>
+            </>
+          )}
         </nav>
       </div>
-      {open && <div className="container mt-3"><SearchBar /></div>}
     </header>
   );
 }
