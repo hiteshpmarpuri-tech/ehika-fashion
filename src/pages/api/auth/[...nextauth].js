@@ -18,19 +18,29 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          if (!credentials) return null;
+          if (!credentials) {
+            console.error('[auth-debug] authorize called without credentials');
+            return null;
+          }
           const email = credentials.email?.toLowerCase();
           let password = credentials.password;
-          if (!email || password === undefined) return null;
+          if (!email || password === undefined) {
+            console.error('[auth-debug] missing email or password in credentials');
+            return null;
+          }
 
           // Defensive check for prisma
           if (!prisma) {
-            console.error('Prisma client not available in authorize');
+            console.error('[auth-debug] Prisma client not available in authorize');
             return null;
           }
 
           const user = await prisma.user.findUnique({ where: { email } });
-          if (!user || !user.password) return null;
+          console.error(`[auth-debug] lookup user email=${email} found=${!!user}`);
+          if (!user || !user.password) {
+            console.error('[auth-debug] user missing or has no password stored');
+            return null;
+          }
 
           // Accept passwords with special characters by trying a few decoding variants
           const variants = new Set([password]);
@@ -40,18 +50,22 @@ export const authOptions = {
           for (const p of variants) {
             try {
               const ok = bcrypt.compareSync(p, user.password);
+              console.error(`[auth-debug] compare variant length=${p?.length || 0} result=${ok}`);
               if (ok) {
+                console.error('[auth-debug] credentials validated successfully');
                 return { id: user.id, name: user.name || user.email, email: user.email, isAdmin: user.isAdmin };
               }
             } catch (e) {
+              console.error('[auth-debug] bcrypt compare error', e?.message || e);
               // ignore compare errors for a variant
             }
           }
 
+          console.error('[auth-debug] authorization failed: no variant matched');
           return null;
         } catch (err) {
           // Log error for debugging (server-side only) but return null to avoid 500
-          console.error('Authorize error:', err?.message || err);
+          console.error('[auth-debug] Authorize error:', err?.message || err);
           return null;
         }
       }
