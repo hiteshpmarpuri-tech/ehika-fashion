@@ -8,7 +8,11 @@ export default function Header() {
     <header className="header py-4">
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/"><a className="logo">EHIKA</a></Link>
+          <Link href="/">
+            <a aria-label="Ehika Fashion home">
+              <img src="/images/ehika-logo.svg" alt="Ehika Fashion" style={{height:48}} />
+            </a>
+          </Link>
         </div>
         <nav className="flex items-center">
           <Link href="/products"><a>Products</a></Link>
