@@ -14,13 +14,28 @@ export default function Signup() {
     setMsg('');
     try {
       const res = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Signup failed');
+
+      // Defensive parsing: server may return HTML error pages in some failure modes
+      const contentType = res.headers.get('content-type') || '';
+      let body;
+      if (contentType.includes('application/json')) {
+        body = await res.json();
+      } else {
+        body = await res.text();
+      }
+
+      if (!res.ok) {
+        // If HTML was returned, show a short excerpt to help debugging
+        const errText = typeof body === 'string' ? (body || 'Server error') : (body.error || JSON.stringify(body));
+        setMsg(errText.slice ? errText.slice(0, 1000) : String(errText));
+        return;
+      }
+
+      // Success path (body is JSON)
       // Automatically sign in the user after successful signup
       const signinResult = await signIn('credentials', { redirect: false, email, password });
       if (signinResult && signinResult.ok) {
-        // If this is the admin email redirect to /admin, otherwise homepage
-        const adminEmail = 'ehikfashions@gmail.com';
+        const adminEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'ehikfashions@gmail.com');
         if ((email || '').toLowerCase() === adminEmail.toLowerCase()) {
           router.push('/admin');
         } else {
@@ -28,11 +43,12 @@ export default function Signup() {
         }
         return;
       }
-      // If sign-in failed, redirect to sign-in page
+
+      // If sign-in failed, show message or redirect to sign-in page
       setMsg('Signup successful — please sign in');
       setTimeout(() => router.push('/api/auth/signin'), 800);
     } catch (err) {
-      setMsg(err.message);
+      setMsg(err?.message || 'Network error');
     }
   }
 
@@ -44,7 +60,7 @@ export default function Signup() {
         <label className="block mt-3">Email<input value={email} onChange={e=>setEmail(e.target.value)} className="w-full mt-1 p-2 border rounded" /></label>
         <label className="block mt-3">Password<input value={password} onChange={e=>setPassword(e.target.value)} type="password" className="w-full mt-1 p-2 border rounded" /></label>
         <div className="mt-4"><button className="px-4 py-2 border rounded">Create account</button></div>
-        {msg && <p className="mt-2">{msg}</p>}
+        {msg && <p className="mt-2 whitespace-pre-wrap">{msg}</p>}
       </form>
     </main>
   );
