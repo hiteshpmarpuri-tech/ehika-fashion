@@ -12,15 +12,21 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials) return null;
-        const email = credentials.email?.toLowerCase();
-        const password = credentials.password;
-        if (!email || !password) return null;
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.password) return null;
-        const ok = await bcrypt.compare(password, user.password);
-        if (!ok) return null;
-        return { id: user.id, name: user.name || user.email, email: user.email, isAdmin: user.isAdmin };
+        try {
+          if (!credentials) return null;
+          const email = credentials.email?.toLowerCase();
+          const password = credentials.password;
+          if (!email || !password) return null;
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user || !user.password) return null;
+          const ok = await bcrypt.compare(password, user.password);
+          if (!ok) return null;
+          return { id: user.id, name: user.name || user.email, email: user.email, isAdmin: user.isAdmin };
+        } catch (err) {
+          // Log error for debugging (server-side only)
+          console.error('Authorize error:', err);
+          throw err;
+        }
       }
     })
   ],

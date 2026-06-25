@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function Header() {
-  const { data: session } = useSession();
+  const sessionHook = useSession();
+  const session = sessionHook?.data || null;
   const [logoUrl, setLogoUrl] = useState('/images/ehika-logo.svg');
   const [icons, setIcons] = useState([]);
 

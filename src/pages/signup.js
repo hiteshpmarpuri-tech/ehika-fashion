@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,20 @@ export default function Signup() {
       const res = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, name }) });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Signup failed');
-      setMsg('Signup successful — redirecting to sign in');
+      // Automatically sign in the user after successful signup
+      const signinResult = await signIn('credentials', { redirect: false, email, password });
+      if (signinResult && signinResult.ok) {
+        // If this is the admin email redirect to /admin, otherwise homepage
+        const adminEmail = 'ehikfashions@gmail.com';
+        if ((email || '').toLowerCase() === adminEmail.toLowerCase()) {
+          router.push('/admin');
+        } else {
+          router.push('/');
+        }
+        return;
+      }
+      // If sign-in failed, redirect to sign-in page
+      setMsg('Signup successful — please sign in');
       setTimeout(() => router.push('/api/auth/signin'), 800);
     } catch (err) {
       setMsg(err.message);
