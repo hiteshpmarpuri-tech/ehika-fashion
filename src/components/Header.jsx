@@ -1,16 +1,32 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState('/images/ehika-logo.svg');
+
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.logoUrl) setLogoUrl(json.logoUrl);
+      } catch (err) {
+        // ignore and keep default
+      }
+    }
+    loadSettings();
+  }, []);
+
   return (
     <header className="header py-4">
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/">
             <a aria-label="Ehika Fashion home">
-              <img src="/images/ehika-logo.svg" alt="Ehika Fashion" style={{height:48}} />
+              <img src={logoUrl} alt="Ehika Fashion" style={{height:48, objectFit:'contain'}} />
             </a>
           </Link>
         </div>
