@@ -1,22 +1,27 @@
-let settings = {
-  logoUrl: '/images/ehika-logo.svg'
-};
+import { getSession } from 'next-auth/react';
+import prisma from '../../lib/prisma';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === 'GET') {
-    return res.status(200).json(settings);
+    let settings = await prisma.settings.findUnique({ where: { id: 1 } });
+    if (!settings) {
+      settings = await prisma.settings.create({ data: { id: 1, logoUrl: '/images/ehika-logo.svg', about: '' } });
+    }
+    return res.status(200).json({ settings });
   }
 
+  const session = await getSession({ req });
+  if (!session || !session.isAdmin) return res.status(401).json({ error: 'Unauthorized' });
+
   if (req.method === 'POST') {
-    const token = req.headers['x-admin-token'];
-    if (!token || token !== process.env.ADMIN_TOKEN) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    const body = req.body;
-    if (body.logoUrl) settings.logoUrl = body.logoUrl;
-    return res.status(200).json({ message: 'Settings updated', settings });
+    const { logoUrl, about } = req.body;
+    const data = {};
+    if (logoUrl !== undefined) data.logoUrl = logoUrl;
+    if (about !== undefined) data.about = about;
+    const settings = await prisma.settings.upsert({ where: { id: 1 }, update: data, create: { id: 1, ...data } });
+    return res.status(200).json({ settings });
   }
 
   res.setHeader('Allow', ['GET','POST']);
-  res.status(405).end(`Method ${req.method} Not Allowed`);
+  res.status(405).end();
 }
