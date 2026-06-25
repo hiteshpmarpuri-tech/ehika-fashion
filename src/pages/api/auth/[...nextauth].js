@@ -24,7 +24,7 @@ export const authOptions = {
           // Accept passwords with special characters by trying a few decoding variants
           const variants = new Set([password]);
           try { variants.add(decodeURIComponent(password)); } catch (e) {}
-          try { variants.add(password.replace(/\u0020/g, ' ')); } catch (e) {}
+          try { variants.add(password.replace(/\\u0020/g, ' ')); } catch (e) {}
 
           for (const p of variants) {
             try {
@@ -39,9 +39,9 @@ export const authOptions = {
 
           return null;
         } catch (err) {
-          // Log error for debugging (server-side only)
+          // Log error for debugging (server-side only) but return null to avoid 500
           console.error('Authorize error:', err);
-          throw err;
+          return null;
         }
       }
     })
