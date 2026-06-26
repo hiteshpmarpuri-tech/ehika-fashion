@@ -7,7 +7,10 @@ const state = {
     aboutContent: 'Welcome to Ehika Fashion. Our journey began with a simple vision: to redefine luxury fashion for the modern aesthetic. Every piece in our collection is carefully curated to embody elegance, quality, and timeless style.',
     brandLogo: null,
     promoItems: [],
-    paymentMethods: []
+    paymentMethods: [],
+    // Admin credentials
+    adminEmail: 'ehikafashions@gmail.com',
+    adminPassword: '456654'
 };
 
 // ==================== INITIALIZATION ====================
@@ -519,100 +522,18 @@ function deletePaymentMethod(methodId) {
 
 // ==================== ADMIN AUTHENTICATION ====================
 function showLoginModal() {
-    const adminPassword = prompt('Enter admin password:');
-    if (adminPassword === 'admin123') {
-        state.isAdminLoggedIn = true;
-        renderNavigation();
-        alert('Welcome Admin!');
-    } else if (adminPassword !== null) {
-        alert('Incorrect password');
-    }
-}
-
-function showSignupModal() {
-    alert('Signup functionality would be implemented here');
-}
-
-function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        state.isAdminLoggedIn = false;
-        renderNavigation();
-        closeAdminDashboard();
-    }
-}
-
-// ==================== ADMIN DASHBOARD ====================
-function openAdminDashboard() {
-    if (!state.isAdminLoggedIn) {
-        alert('Please login as admin first');
-        return;
-    }
-    
-    document.getElementById('adminDashboard').classList.remove('hidden');
-    
-    // Initialize admin content
-    renderProductsList();
-    renderPromoItemsList();
-    renderPaymentsList();
-    document.getElementById('aboutTextarea').value = state.aboutContent;
-    
-    // Switch to first tab
-    switchAdminTab('products');
-    
-    // Close user menu
-    document.getElementById('userMenu').classList.add('hidden');
-}
-
-function closeAdminDashboard() {
-    document.getElementById('adminDashboard').classList.add('hidden');
-}
-
-function switchAdminTab(tabName) {
-    // Hide all tabs
-    document.querySelectorAll('.admin-tab-content').forEach(tab => {
-        tab.classList.add('hidden');
-    });
-    
-    // Remove active state from all tab buttons
-    document.querySelectorAll('.admin-tab').forEach(btn => {
-        btn.classList.remove('active', 'border-b-2', 'border-neutral-900');
-        btn.classList.add('border-b', 'border-neutral-200');
-    });
-    
-    // Show selected tab
-    const tabMap = {
-        'products': 'productsTab',
-        'logo': 'logoTab',
-        'about': 'aboutTab',
-        'notes': 'notesTab',
-        'promo': 'promoTab',
-        'payments': 'paymentsTab'
-    };
-    
-    if (tabMap[tabName]) {
-        document.getElementById(tabMap[tabName]).classList.remove('hidden');
-        
-        // Find and activate the corresponding button
-        document.querySelectorAll('.admin-tab').forEach(btn => {
-            if (btn.textContent.toLowerCase().includes(tabName.split('-')[0])) {
-                btn.classList.add('active', 'border-b-2', 'border-neutral-900');
-                btn.classList.remove('border-b', 'border-neutral-200');
-            }
-        });
-    }
-}
-
-// Close dashboard on outside click
-document.addEventListener('click', (e) => {
-    const dashboard = document.getElementById('adminDashboard');
-    if (e.target === dashboard) {
-        closeAdminDashboard();
-    }
-});
-
-// Keyboard shortcut: Escape to close dashboard
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeAdminDashboard();
-    }
-});
+    // Create a custom login modal with email and password inputs
+    const loginHTML = `
+        <div id="loginModalBackdrop" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-playfair font-bold mb-6">Admin Login</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-lora font-medium mb-2">Email</label>
+                        <input type="email" id="adminEmailInput" placeholder="Enter email" class="w-full border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-lora font-medium mb-2">Password</label>
+                        <input type="password" id="adminPasswordInput" placeholder="Enter password" class="w-full border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                    </div>
+                    <div class="flex gap-3 pt-4\">\n                        <button onclick="verifyAdminLogin()" class="flex-1 px-4 py-2 bg-neutral-900 text-white font-lora font-medium rounded hover:bg-neutral-800 transition">Login</button>\n                        <button onclick="closeLoginModal()" class="flex-1 px-4 py-2 border border-neutral-300 text-neutral-900 font-lora font-medium rounded hover:bg-neutral-50 transition">Cancel</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    `;\n    \n    document.body.insertAdjacentHTML('beforeend', loginHTML);\n    document.getElementById('adminEmailInput').focus();\n    \n    // Allow Enter key to submit\n    document.getElementById('adminPasswordInput').addEventListener('keypress', (e) => {\n        if (e.key === 'Enter') verifyAdminLogin();\n    });\n}\n\nfunction verifyAdminLogin() {\n    const email = document.getElementById('adminEmailInput').value.trim();\n    const password = document.getElementById('adminPasswordInput').value;\n    \n    if (email === state.adminEmail && password === state.adminPassword) {\n        state.isAdminLoggedIn = true;\n        renderNavigation();\n        closeLoginModal();\n        alert('✓ Welcome Admin!');\n    } else {\n        alert('✗ Invalid email or password');\n        document.getElementById('adminPasswordInput').value = '';\n        document.getElementById('adminEmailInput').focus();\n    }\n}\n\nfunction closeLoginModal() {\n    const backdrop = document.getElementById('loginModalBackdrop');\n    if (backdrop) backdrop.remove();\n}\n\nfunction showSignupModal() {\n    alert('Signup functionality would be implemented here');\n}\n\nfunction logout() {\n    if (confirm('Are you sure you want to logout?')) {\n        state.isAdminLoggedIn = false;\n        renderNavigation();\n        closeAdminDashboard();\n        alert('You have been logged out.');\n    }\n}\n\n// ==================== ADMIN DASHBOARD ====================\nfunction openAdminDashboard() {\n    if (!state.isAdminLoggedIn) {\n        alert('Please login as admin first');\n        return;\n    }\n    \n    document.getElementById('adminDashboard').classList.remove('hidden');\n    \n    // Initialize admin content\n    renderProductsList();\n    renderPromoItemsList();\n    renderPaymentsList();\n    document.getElementById('aboutTextarea').value = state.aboutContent;\n    \n    // Switch to first tab\n    switchAdminTab('products');\n    \n    // Close user menu\n    document.getElementById('userMenu').classList.add('hidden');\n}\n\nfunction closeAdminDashboard() {\n    document.getElementById('adminDashboard').classList.add('hidden');\n}\n\nfunction switchAdminTab(tabName) {\n    // Hide all tabs\n    document.querySelectorAll('.admin-tab-content').forEach(tab => {\n        tab.classList.add('hidden');\n    });\n    \n    // Remove active state from all tab buttons\n    document.querySelectorAll('.admin-tab').forEach(btn => {\n        btn.classList.remove('active', 'border-b-2', 'border-neutral-900');\n        btn.classList.add('border-b', 'border-neutral-200');\n    });\n    \n    // Show selected tab\n    const tabMap = {\n        'products': 'productsTab',\n        'logo': 'logoTab',\n        'about': 'aboutTab',\n        'notes': 'notesTab',\n        'promo': 'promoTab',\n        'payments': 'paymentsTab'\n    };\n    \n    if (tabMap[tabName]) {\n        document.getElementById(tabMap[tabName]).classList.remove('hidden');\n        \n        // Find and activate the corresponding button\n        document.querySelectorAll('.admin-tab').forEach(btn => {\n            if (btn.textContent.toLowerCase().includes(tabName.split('-')[0])) {\n                btn.classList.add('active', 'border-b-2', 'border-neutral-900');\n                btn.classList.remove('border-b', 'border-neutral-200');\n            }\n        });\n    }\n}\n\n// Close dashboard on outside click\ndocument.addEventListener('click', (e) => {\n    const dashboard = document.getElementById('adminDashboard');\n    if (e.target === dashboard) {\n        closeAdminDashboard();\n    }\n});\n\n// Keyboard shortcut: Escape to close dashboard\ndocument.addEventListener('keydown', (e) => {\n    if (e.key === 'Escape') {\n        closeAdminDashboard();\n    }\n});
