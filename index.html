@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ehika Fashion - Luxury Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-neutral-50 text-neutral-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white border-b border-neutral-200 z-50 shadow-sm">
+        <!-- Top Promo Bar -->
+        <div class="bg-neutral-900 text-white py-2 px-4" id="promoBar">
+            <div class="container mx-auto flex justify-center items-center h-8" id="promoContent">
+                <!-- Dynamic promo icons/text rendered here -->
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Left Navigation -->
+                <div class="flex gap-8 items-center">
+                    <a href="#" onclick="navigateTo('home')" class="text-sm tracking-widest font-lora font-medium hover:text-gold transition">SHOP</a>
+                    <a href="#" onclick="navigateTo('about')" class="text-sm tracking-widest font-lora font-medium hover:text-gold transition">ABOUT</a>
+                </div>
+
+                <!-- Center Logo -->
+                <div class="absolute left-1/2 transform -translate-x-1/2">
+                    <div id="logoContainer" class="h-12 w-auto flex items-center justify-center">
+                        <img id="brandLogo" src="" alt="Ehika Fashion" class="h-full w-auto object-contain" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 80%22%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Playfair Display%22 font-size=%2236%22 font-weight=%22700%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EEHIKA%3C/text%3E%3C/svg%3E'>
+                    </div>
+                </div>
+
+                <!-- Right Icons -->
+                <div class="flex gap-6 items-center">
+                    <!-- Search Icon -->
+                    <div class="relative">
+                        <button onclick="toggleSearch()" class="text-neutral-900 hover:text-gold transition">
+                            <i class="fas fa-search text-lg"></i>
+                        </button>
+                        <div id="searchBar" class="hidden absolute right-0 top-full mt-2 bg-white border border-neutral-200 rounded p-2 shadow-lg">
+                            <input type="text" placeholder="Search products..." class="px-4 py-2 w-64 border border-neutral-300 rounded text-sm focus:outline-none focus:border-gold">
+                        </div>
+                    </div>
+
+                    <!-- User Account Icon -->
+                    <button onclick="toggleUserMenu()" class="text-neutral-900 hover:text-gold transition relative">
+                        <i class="fas fa-user text-lg"></i>
+                        <div id="userMenu" class="hidden absolute right-0 top-full mt-2 bg-white border border-neutral-200 rounded shadow-lg py-2 w-48 z-50">
+                            <div id="userMenuContent">
+                                <!-- Login/Signup or Admin Dashboard rendered here -->
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-32">
+        <!-- Home Page -->
+        <div id="homePage" class="page-content">
+            <!-- Hero Banner -->
+            <section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-32 px-4 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10">
+                    <svg class="absolute top-0 right-0 w-96 h-96" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="200" cy="200" r="150" stroke="currentColor" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="100" stroke="currentColor" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="50" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                </div>
+                <div class="container mx-auto max-w-6xl relative z-10 text-center">
+                    <h1 class="text-6xl md:text-7xl font-playfair font-bold mb-6 leading-tight">Elegance Redefined</h1>
+                    <p class="text-xl font-lora text-neutral-300 mb-8 max-w-2xl mx-auto">Discover our curated collection of luxury fashion pieces, crafted with precision and passion for the modern aesthetic.</p>
+                    <button onclick="navigateTo('shop')" class="px-8 py-4 bg-gold text-neutral-900 font-lora font-medium rounded hover:bg-yellow-500 transition inline-block">
+                        EXPLORE COLLECTION
+                    </button>
+                </div>
+            </section>
+
+            <!-- Featured Products -->
+            <section class="container mx-auto px-4 py-16 max-w-6xl">
+                <h2 class="text-4xl font-playfair font-bold mb-12 text-center">Featured Collection</h2>
+                <div id="featuredProducts" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Products rendered here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Shop Page -->
+        <div id="shopPage" class="page-content hidden">
+            <section class="container mx-auto px-4 py-16 max-w-6xl">
+                <h1 class="text-5xl font-playfair font-bold mb-12">Collection</h1>
+                <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- All products rendered here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Product Detail Page -->
+        <div id="productDetailPage" class="page-content hidden">
+            <section class="container mx-auto px-4 py-16 max-w-6xl">
+                <button onclick="navigateTo('shop')" class="text-sm font-lora mb-8 hover:text-gold transition">← BACK TO SHOP</button>
+                <div id="productDetailContent" class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Product detail rendered here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- About Page -->
+        <div id="aboutPage" class="page-content hidden">
+            <section class="container mx-auto px-4 py-16 max-w-4xl">
+                <h1 class="text-5xl font-playfair font-bold mb-12">Our Story</h1>
+                <div id="aboutContent" class="prose prose-lg font-lora leading-relaxed text-neutral-700">
+                    <!-- About content rendered here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Notes/Announcements Section -->
+        <section class="bg-neutral-100 py-12 px-4 mt-12" id="notesSection">
+            <div class="container mx-auto max-w-4xl">
+                <h3 class="text-2xl font-playfair font-bold mb-8 text-center">Latest Updates</h3>
+                <div id="notesList" class="space-y-4">
+                    <!-- Notes rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="adminDashboard" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <!-- Admin Header -->
+            <div class="bg-neutral-900 text-white px-8 py-6 flex justify-between items-center sticky top-0">
+                <h2 class="text-2xl font-playfair font-bold">Admin Dashboard</h2>
+                <button onclick="closeAdminDashboard()" class="text-white text-2xl">&times;</button>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="flex border-b border-neutral-200">
+                <button onclick="switchAdminTab('products')" class="admin-tab flex-1 py-4 border-b-2 border-neutral-900 font-lora font-medium text-center">Products</button>
+                <button onclick="switchAdminTab('logo')" class="admin-tab flex-1 py-4 border-b border-neutral-200 font-lora font-medium text-center hover:bg-neutral-50">Logo</button>
+                <button onclick="switchAdminTab('about')" class="admin-tab flex-1 py-4 border-b border-neutral-200 font-lora font-medium text-center hover:bg-neutral-50">About Page</button>
+                <button onclick="switchAdminTab('notes')" class="admin-tab flex-1 py-4 border-b border-neutral-200 font-lora font-medium text-center hover:bg-neutral-50">Notes</button>
+                <button onclick="switchAdminTab('promo')" class="admin-tab flex-1 py-4 border-b border-neutral-200 font-lora font-medium text-center hover:bg-neutral-50">Promo Icons</button>
+                <button onclick="switchAdminTab('payments')" class="admin-tab flex-1 py-4 border-b border-neutral-200 font-lora font-medium text-center hover:bg-neutral-50">Payments</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="p-8">
+                <!-- Products Tab -->
+                <div id="productsTab" class="admin-tab-content">
+                    <div class="mb-8">
+                        <h3 class="text-xl font-playfair font-bold mb-4">Add New Product</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="productTitle" placeholder="Product Title" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <input type="number" id="productPrice" placeholder="Price" step="0.01" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <input type="file" id="productImage" accept="image/*" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <textarea id="productDescription" placeholder="Description" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold"></textarea>
+                        </div>
+                        <button onclick="addProduct()" class="mt-4 px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Add Product</button>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-playfair font-bold mb-4">Manage Products</h3>
+                        <div id="productsList" class="space-y-4">
+                            <!-- Products list rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo Tab -->
+                <div id="logoTab" class="admin-tab-content hidden">
+                    <h3 class="text-xl font-playfair font-bold mb-6">Upload Brand Logo</h3>
+                    <div class="border-2 border-dashed border-neutral-300 rounded-lg p-8 text-center mb-6">
+                        <input type="file" id="logoUpload" accept="image/*" class="hidden" onchange="previewLogo()">
+                        <button onclick="document.getElementById('logoUpload').click()" class="text-neutral-600 hover:text-neutral-900">
+                            <i class="fas fa-cloud-upload-alt text-4xl mb-4"></i>
+                            <p class="font-lora">Click to upload logo</p>
+                            <p class="text-sm text-neutral-500">PNG, JPG or SVG (max 5MB)</p>
+                        </button>
+                    </div>
+                    <div id="logoPreview" class="mb-6 text-center">
+                        <!-- Logo preview rendered here -->
+                    </div>
+                    <button onclick="uploadLogo()" class="px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Save Logo</button>
+                </div>
+
+                <!-- About Page Tab -->
+                <div id="aboutTab" class="admin-tab-content hidden">
+                    <h3 class="text-xl font-playfair font-bold mb-6">Edit About Page Content</h3>
+                    <textarea id="aboutTextarea" class="w-full h-96 border border-neutral-300 rounded px-4 py-2 font-lora focus:outline-none focus:border-gold"></textarea>
+                    <button onclick="updateAbout()" class="mt-4 px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Save Changes</button>
+                </div>
+
+                <!-- Notes Tab -->
+                <div id="notesTab" class="admin-tab-content hidden">
+                    <h3 class="text-xl font-playfair font-bold mb-6">Create Announcement</h3>
+                    <textarea id="noteContent" placeholder="Write your announcement..." class="w-full h-24 border border-neutral-300 rounded px-4 py-2 font-lora focus:outline-none focus:border-gold mb-4"></textarea>
+                    <button onclick="addNote()" class="px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Add Note</button>
+                    <div class="mt-8">
+                        <h3 class="text-xl font-playfair font-bold mb-4">Manage Notes</h3>
+                        <div id="notesList" class="space-y-4">
+                            <!-- Notes list rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promo Icons Tab -->
+                <div id="promoTab" class="admin-tab-content hidden">
+                    <h3 class="text-xl font-playfair font-bold mb-6">Manage Promo Bar Icons</h3>
+                    <div class="mb-8">
+                        <h4 class="font-lora font-medium mb-4">Add Promo Item</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="promoText" placeholder="Promo Text" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <input type="color" id="promoColor" value="#D4AF37" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                        </div>
+                        <button onclick="addPromoItem()" class="mt-4 px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Add Item</button>
+                    </div>
+                    <div id="promoItemsList" class="space-y-2">
+                        <!-- Promo items rendered here -->
+                    </div>
+                </div>
+
+                <!-- Payments Tab -->
+                <div id="paymentsTab" class="admin-tab-content hidden">
+                    <h3 class="text-xl font-playfair font-bold mb-6">Payment Methods</h3>
+                    <div class="mb-8">
+                        <h4 class="font-lora font-medium mb-4">Add Payment Method</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="paymentName" placeholder="Payment Method Name" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <input type="text" id="paymentIcon" placeholder="Icon Class (e.g., fab fa-cc-visa)" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold">
+                            <input type="text" id="paymentDetails" placeholder="Details (optional)" class="border border-neutral-300 rounded px-4 py-2 focus:outline-none focus:border-gold col-span-2">
+                        </div>
+                        <button onclick="addPaymentMethod()" class="mt-4 px-6 py-2 bg-neutral-900 text-white rounded font-lora font-medium hover:bg-neutral-800 transition">Add Payment Method</button>
+                    </div>
+                    <div id="paymentsList" class="space-y-2">
+                        <!-- Payment methods rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-neutral-900 text-white py-12 px-4 mt-16">
+        <div class="container mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h4 class="font-playfair font-bold text-lg mb-4">Ehika Fashion</h4>
+                <p class="font-lora text-neutral-400 text-sm">Luxury fashion reimagined for the modern aesthetic.</p>
+            </div>
+            <div>
+                <h4 class="font-playfair font-bold text-lg mb-4">Quick Links</h4>
+                <ul class="space-y-2 font-lora text-sm text-neutral-400">
+                    <li><a href="#" onclick="navigateTo('shop')" class="hover:text-gold transition">Shop</a></li>
+                    <li><a href="#" onclick="navigateTo('about')" class="hover:text-gold transition">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-playfair font-bold text-lg mb-4">Follow Us</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="text-neutral-400 hover:text-gold transition"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-neutral-400 hover:text-gold transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-neutral-400 hover:text-gold transition"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-neutral-700 mt-8 pt-8 text-center font-lora text-sm text-neutral-400">
+            <p>&copy; 2024 Ehika Fashion. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
